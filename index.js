@@ -20,17 +20,31 @@ client.once("ready", () => {
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return; // Ignore bot messages
 
-  // Regex to detect X (Twitter) links, including mobile links
+  // Regex to detect Twitter/X links
   const xRegex =
     /https:\/\/(?:x\.com|twitter\.com|mobile\.twitter\.com)\/\w+\/status\/\d+/;
 
+  // Regex to detect Instagram reel links
+  const instaRegex =
+    /https:\/\/www\.instagram\.com\/(reel|p|tv|stories)\/[\w-]+/;
+
+  let fixedMessage = message.content;
+
   if (xRegex.test(message.content)) {
-    // Replace 'x.com', 'twitter.com', or 'mobile.twitter.com' with 'fxtwitter.com'
-    const fixedMessage = message.content.replace(
+    // Replace Twitter/X links with fxtwitter.com
+    fixedMessage = message.content.replace(
       /x\.com|twitter\.com|mobile\.twitter\.com/g,
       "fxtwitter.com"
     );
+  } else if (instaRegex.test(message.content)) {
+    // Replace Instagram links with ddinstagram.com
+    fixedMessage = message.content.replace(
+      /www\.instagram\.com/g,
+      "www.ddinstagram.com"
+    );
+  }
 
+  if (fixedMessage !== message.content) {
     try {
       // Check if the bot has permission to delete messages
       if (
