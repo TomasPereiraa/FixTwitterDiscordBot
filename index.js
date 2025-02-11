@@ -25,8 +25,9 @@ client.on("messageCreate", async (message) => {
     /https:\/\/(?:x\.com|twitter\.com|mobile\.twitter\.com)\/\w+\/status\/\d+/;
 
   if (xRegex.test(message.content)) {
-    const fixedLink = message.content.replace(
-      /x\.com|twitter\.com|mobile\.twitter\.com/,
+    // Replace 'x.com', 'twitter.com', or 'mobile.twitter.com' with 'fxtwitter.com'
+    const fixedMessage = message.content.replace(
+      /x\.com|twitter\.com|mobile\.twitter\.com/g,
       "fxtwitter.com"
     );
 
@@ -43,7 +44,10 @@ client.on("messageCreate", async (message) => {
         console.warn("Bot lacks permission to delete messages.");
       }
 
-      await message.channel.send(fixedLink);
+      // Repost the message with the author's username
+      await message.channel.send(
+        `**${message.author.username}:** ${fixedMessage}`
+      );
     } catch (error) {
       console.error("Failed to process message:", error);
     }
