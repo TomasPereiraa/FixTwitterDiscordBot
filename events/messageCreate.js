@@ -1,5 +1,10 @@
 const { PermissionsBitField } = require("discord.js");
-const helpData = require("../data/helpMessage.json");  
+const helpData = require("../data/helpMessage.json");
+const statsCommand = require("../commands/stats");
+const flipCommand = require("../commands/flip");
+const userinfoCommand = require("../commands/userinfo");
+const serverinfoCommand = require("../commands/serverinfo");
+
 module.exports = async (client, message) => {
   if (message.author.bot) return;
 
@@ -38,6 +43,17 @@ module.exports = async (client, message) => {
     } catch (error) {
       console.error("Failed to process message:", error);
     }
+  }
+
+  // Execute commands based on message content
+  if (message.content.toLowerCase() === "!stats") {
+    await statsCommand(client, message);
+  } else if (message.content.toLowerCase() === "!flip") {
+    await flipCommand(client, message);
+  } else if (message.content.toLowerCase().startsWith("!userinfo")) {
+    await userinfoCommand(client, message);
+  } else if (message.content.toLowerCase() === "!serverinfo") {
+    await serverinfoCommand(client, message);
   }
 
   // Handle !help command
