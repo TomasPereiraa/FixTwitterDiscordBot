@@ -18,7 +18,12 @@ const commandsPath = path.join(__dirname, "commands");
 fs.readdirSync(commandsPath).forEach((file) => {
   if (file.endsWith(".js")) {
     const command = require(`./commands/${file}`);
-    client.commands.set(command.data.name, command);
+    console.log(command);  // Log to debug the structure of the command file
+    if (command.data && command.data.name) {
+      client.commands.set(command.data.name, command);
+    } else {
+      console.error(`❌ Command missing 'data.name' in ${file}`);
+    }
   }
 });
 
