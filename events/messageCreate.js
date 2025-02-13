@@ -1,6 +1,5 @@
 const { PermissionsBitField } = require("discord.js");
-const helpData = require("../data/helpMessage.json");  // Import the JSON data
-
+const helpData = require("../data/helpMessage.json");  
 module.exports = async (client, message) => {
   if (message.author.bot) return;
 
