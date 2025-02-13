@@ -1,44 +1,18 @@
-const { PermissionsBitField } = require("discord.js");
+const { SlashCommandBuilder } = require("discord.js");
 
-module.exports = async (client, message) => {
-  if (message.author.bot) return;
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName("serverinfo")
+    .setDescription("Get information about the server."),
 
-  // Handle Twitter (x.com) and Instagram links
-  const xRegex =
-    /https:\/\/(?:x\.com|twitter\.com|mobile\.twitter\.com)\/\w+\/status\/\d+/;
-  const instaRegex =
-    /https:\/\/www\.instagram\.com\/(reel|p|tv|stories)\/[\w-]+/;
-
-  let fixedMessage = message.content;
-
-  if (xRegex.test(message.content)) {
-    fixedMessage = message.content.replace(
-      /x\.com|twitter\.com|mobile\.twitter\.com/g,
-      "fxtwitter.com"
-    );
-  } else if (instaRegex.test(message.content)) {
-    fixedMessage = message.content.replace(
-      /www\.instagram\.com/g,
-      "www.ddinstagram.com"
-    );
-  }
-
-  if (fixedMessage !== message.content) {
-    try {
-      if (
-        message.guild &&
-        message.channel
-          .permissionsFor(client.user)
-          .has(PermissionsBitField.Flags.ManageMessages)
-      ) {
-        await message.delete();
-      }
-
-      await message.channel.send(
-        `**${message.author.username}:** ${fixedMessage}`
-      );
-    } catch (error) {
-      console.error("Failed to process message:", error);
-    }
-  }
+  async execute(interaction) {
+    const guild = interaction.guild;
+    const serverInfoMessage = `
+Server Name: ${guild.name}
+Members: ${guild.memberCount}
+Owner: ${guild.ownerId}
+Region: ${guild.preferredLocale}
+    `;
+    await interaction.reply(serverInfoMessage);
+  },
 };
