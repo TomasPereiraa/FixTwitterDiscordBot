@@ -45,19 +45,21 @@ module.exports = async (client, message) => {
     }
   }
 
-  // Execute commands based on message content
-  if (message.content.toLowerCase() === "!stats") {
+  // Handle text commands like !stats, !flip, etc.
+  const commandPrefix = "!";
+
+  if (message.content.toLowerCase() === `${commandPrefix}stats`) {
     await statsCommand(client, message);
-  } else if (message.content.toLowerCase() === "!flip") {
+  } else if (message.content.toLowerCase() === `${commandPrefix}flip`) {
     await flipCommand(client, message);
-  } else if (message.content.toLowerCase().startsWith("!userinfo")) {
+  } else if (message.content.toLowerCase().startsWith(`${commandPrefix}userinfo`)) {
     await userinfoCommand(client, message);
-  } else if (message.content.toLowerCase() === "!serverinfo") {
+  } else if (message.content.toLowerCase() === `${commandPrefix}serverinfo`) {
     await serverinfoCommand(client, message);
   }
 
-  // Handle !help command
-  if (message.content.toLowerCase() === '!help') {
+  // Handle the !help command
+  if (message.content.toLowerCase() === `${commandPrefix}help`) {
     const helpMessage = helpData.message + helpData.commands
       .map(command => `**${command.name}** - ${command.description}`)
       .join("\n");
