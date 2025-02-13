@@ -1,8 +1,10 @@
 const { PermissionsBitField } = require("discord.js");
+const helpData = require("../data/helpMessage.json");  // Import the JSON data
 
 module.exports = async (client, message) => {
   if (message.author.bot) return;
 
+  // Handle Twitter (x.com) and Instagram links
   const xRegex =
     /https:\/\/(?:x\.com|twitter\.com|mobile\.twitter\.com)\/\w+\/status\/\d+/;
   const instaRegex =
@@ -36,6 +38,19 @@ module.exports = async (client, message) => {
       await message.channel.send(`**${message.author.username}:** ${fixedMessage}`);
     } catch (error) {
       console.error("Failed to process message:", error);
+    }
+  }
+
+  // Handle !help command
+  if (message.content.toLowerCase() === '!help') {
+    const helpMessage = helpData.message + helpData.commands
+      .map(command => `**${command.name}** - ${command.description}`)
+      .join("\n");
+
+    try {
+      await message.reply(helpMessage);
+    } catch (error) {
+      console.error("Failed to send help message:", error);
     }
   }
 };
