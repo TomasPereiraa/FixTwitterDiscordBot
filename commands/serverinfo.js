@@ -1,26 +1,44 @@
-const moment = require("moment");
+const { PermissionsBitField } = require("discord.js");
 
 module.exports = async (client, message) => {
   if (message.author.bot) return;
 
-  // Handle serverinfo command
-  if (message.content.toLowerCase() === '!serverinfo') {
-    const server = message.guild;
+  // Handle Twitter (x.com) and Instagram links
+  const xRegex =
+    /https:\/\/(?:x\.com|twitter\.com|mobile\.twitter\.com)\/\w+\/status\/\d+/;
+  const instaRegex =
+    /https:\/\/www\.instagram\.com\/(reel|p|tv|stories)\/[\w-]+/;
 
-    const serverInfoMessage = `
-\`\`\`plaintext
-Server Info for ${server.name}:
-- Created: ${moment(server.createdAt).format("MMMM Do YYYY, h:mm:ss a")}
-- Members: ${server.memberCount}
-- Owner: ${server.owner.user.tag}
-- Region: ${server.region}
-\`\`\`
-    `;
+  let fixedMessage = message.content;
 
+  if (xRegex.test(message.content)) {
+    fixedMessage = message.content.replace(
+      /x\.com|twitter\.com|mobile\.twitter\.com/g,
+      "fxtwitter.com"
+    );
+  } else if (instaRegex.test(message.content)) {
+    fixedMessage = message.content.replace(
+      /www\.instagram\.com/g,
+      "www.ddinstagram.com"
+    );
+  }
+
+  if (fixedMessage !== message.content) {
     try {
-      await message.reply(serverInfoMessage);
+      if (
+        message.guild &&
+        message.channel
+          .permissionsFor(client.user)
+          .has(PermissionsBitField.Flags.ManageMessages)
+      ) {
+        await message.delete();
+      }
+
+      await message.channel.send(
+        `**${message.author.username}:** ${fixedMessage}`
+      );
     } catch (error) {
-      console.error("Failed to send serverinfo message:", error);
+      console.error("Failed to process message:", error);
     }
   }
 };
