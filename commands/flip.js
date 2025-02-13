@@ -1,20 +1,12 @@
-module.exports = async (client, message) => {
-  if (message.author.bot) return;
+const { SlashCommandBuilder } = require("discord.js");
 
-  // Handle flip command
-  if (message.content.toLowerCase() === '!flip') {
-    const flipResult = Math.random() < 0.5 ? "Heads" : "Tails";
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName("flip")
+    .setDescription("Flip a coin and get heads or tails."),
 
-    const flipMessage = `
-\`\`\`plaintext
-You flipped: ${flipResult}
-\`\`\`
-    `;
-
-    try {
-      await message.reply(flipMessage);
-    } catch (error) {
-      console.error("Failed to send flip message:", error);
-    }
-  }
+  async execute(interaction) {
+    const result = Math.random() > 0.5 ? "Heads" : "Tails";
+    await interaction.reply(`🎲 **Coin Flip**: ${result}`);
+  },
 };
