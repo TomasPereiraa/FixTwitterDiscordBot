@@ -1,21 +1,37 @@
 {
+  "message": "Here are the available commands:\n\n",
   "commands": [
     {
       "name": "/roulette",
-      "description": "Play a roulette game"
+      "description": "Play a roulette game."
     },
     {
-      "name": "/build <CHAMPION_NAME>",
-      "description": "Get a champion build for League of Legends"
+      "name": "!/build",
+      "description": "Get a champion build for League of Legends."
     },
     {
       "name": "!commands",
-      "description": "List all available commands"
+      "description": "List all available commands."
     },
     {
       "name": "!help",
-      "description": "Display this help message"
+      "description": "Display this help message."
+    },
+    {
+      "name": "!stats",
+      "description": "Display user statistics."
+    },
+    {
+      "name": "!flip",
+      "description": "Flip a coin."
+    },
+    {
+      "name": "!userinfo",
+      "description": "Get information about a user."
+    },
+    {
+      "name": "!serverinfo",
+      "description": "Get information about the server."
     }
-  ],
-  "message": "Here are the available commands:\n\n"
+  ]
 }
