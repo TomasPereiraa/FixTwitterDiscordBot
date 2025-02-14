@@ -5,7 +5,7 @@ const { Routes } = require("discord-api-types/v9");
 const fs = require("fs");
 const path = require("path");
 
-const { CLIENT_ID, TOKEN } = process.env; 
+const { CLIENT_ID, TOKEN } = process.env; // No GUILD_ID needed for global commands
 
 const commands = [];
 const commandFiles = fs
