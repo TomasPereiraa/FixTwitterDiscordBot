@@ -8,6 +8,8 @@ const client = new Client({
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildPresences,
+    GatewayIntentBits.GuildMembers,
   ],
 });
 
@@ -18,7 +20,7 @@ const commandsPath = path.join(__dirname, "commands");
 fs.readdirSync(commandsPath).forEach((file) => {
   if (file.endsWith(".js")) {
     const command = require(`./commands/${file}`);
-    console.log(command);  // Log to debug the structure of the command file
+    console.log(command); // Log to debug the structure of the command file
     if (command.data && command.data.name) {
       client.commands.set(command.data.name, command);
     } else {
@@ -33,7 +35,7 @@ const handleEvents = () => {
   fs.readdirSync(eventsPath).forEach((file) => {
     if (file.endsWith(".js")) {
       const event = require(`./events/${file}`);
-      const eventName = path.parse(file).name; 
+      const eventName = path.parse(file).name;
       client.on(eventName, async (...args) => {
         try {
           await event(client, ...args);
