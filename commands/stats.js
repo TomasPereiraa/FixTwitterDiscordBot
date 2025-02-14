@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const moment = require("moment");
 
 module.exports = {
@@ -8,11 +8,21 @@ module.exports = {
 
   async execute(interaction) {
     const uptime = moment.duration(interaction.client.uptime).humanize();
-    const statsMessage = `
-Bot Uptime: ${uptime}
-Server Count: ${interaction.client.guilds.cache.size}
-User Count: ${interaction.client.users.cache.size}
-    `;
-    await interaction.reply(statsMessage);
+    const ping = interaction.client.ws.ping;
+    const serverCount = interaction.client.guilds.cache.size;
+    const userCount = interaction.client.users.cache.size;
+
+    const embed = new EmbedBuilder()
+      .setColor("#0099ff")
+      .setTitle("📊 Bot Statistics")
+      .addFields(
+        { name: "⏳ Uptime", value: uptime, inline: true },
+        { name: "📡 Ping", value: `${ping}ms`, inline: true },
+        { name: "🌍 Servers", value: `${serverCount}`, inline: true },
+        { name: "👥 Users", value: `${userCount}`, inline: true }
+      )
+      .setTimestamp();
+
+    await interaction.reply({ embeds: [embed] });
   },
 };
