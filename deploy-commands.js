@@ -1,10 +1,11 @@
 require("dotenv").config(); // Load .env file
 
-const { SlashCommandBuilder } = require("discord.js");
+const { Client, GatewayIntentBits, REST } = require("discord.js");
+const { Routes } = require("discord-api-types/v9");
 const fs = require("fs");
 const path = require("path");
 
-const { CLIENT_ID, GUILD_ID, TOKEN } = process.env; // Access environment variables
+const { CLIENT_ID, TOKEN } = process.env; 
 
 const commands = [];
 const commandFiles = fs
@@ -16,21 +17,18 @@ for (const file of commandFiles) {
   commands.push(command.data.toJSON());
 }
 
-const { REST } = require("@discordjs/rest");
-const { Routes } = require("discord-api-types/v9");
-
 const rest = new REST({ version: "9" }).setToken(TOKEN);
 
 (async () => {
   try {
-    console.log("Started refreshing application (/) commands.");
+    console.log("Started refreshing global (/) commands...");
 
-    await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
+    await rest.put(Routes.applicationCommands(CLIENT_ID), {
       body: commands,
     });
 
-    console.log("Successfully reloaded application (/) commands.");
+    console.log("✅ Successfully registered global commands!");
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error deploying commands:", error);
   }
 })();
