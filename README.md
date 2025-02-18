@@ -4,7 +4,11 @@
 This is a **Discord bot** designed to:
 ✅ Fix Twitter and Instagram links in Discord messages  
 ✅ Provide a fun `/roulette` command  
-✅ Fetch **League of Legends build links** using `/build <champion>`
+✅ Fetch **League of Legends build links** using `/build <champion>`  
+✅ Flip a virtual coin with `/flip`  
+✅ Retrieve server information using `/serverinfo`  
+✅ Display bot statistics via `/stats`  
+✅ Fetch user details using `/userinfo`  
 
 This guide will help you **set up, run, and deploy** the bot on **Railway** for **24/7 availability**.
 
@@ -75,12 +79,17 @@ CLIENT_ID=your-discord-application-id
 │── /commands
 │   ├── roulette.js  # Slash command for roulette
 │   ├── build.js  # Slash command for LoL champion builds
+│   ├── flip.js  # Coin flip command
+│   ├── serverinfo.js  # Fetches server details
+│   ├── stats.js  # Displays bot statistics
+│   ├── userinfo.js  # Fetches user details
 │── /events
 │   ├── interactionCreate.js  # Handles commands & autocomplete
 │   ├── messageCreate.js  # Handles Twitter/Instagram link fix
 │   ├── ready.js  # Runs when bot starts
 │── /data
 │   ├── champions.json  # List of all LoL champions for autocomplete
+│   ├── roulette.json  # List of all numbers and colors
 │── index.js  # Main bot file
 │── deploy-commands.js  # Registers slash commands
 │── .env  # Stores bot token
@@ -92,7 +101,30 @@ CLIENT_ID=your-discord-application-id
 ## 7️⃣ Add the `/build` Command
 ### **Step 1: Create `/commands/build.js`**
 Create a new file at **`/commands/build.js`**:
+```javascript
+const { SlashCommandBuilder } = require('discord.js');
+const champions = require('../data/champions.json');
 
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName('build')
+        .setDescription('Get a League of Legends champion build')
+        .addStringOption(option =>
+            option.setName('champion')
+                .setDescription('Choose a champion')
+                .setRequired(true)
+                .setAutocomplete(true)
+        ),
+    async execute(interaction) {
+        const champion = interaction.options.getString('champion');
+        if (!champions.includes(champion.toLowerCase())) {
+            return interaction.reply({ content: 'Champion not found!', ephemeral: true });
+        }
+        const buildLink = `https://u.gg/lol/champions/${champion}/build/`;
+        await interaction.reply(`Here's the build for **${champion}**: ${buildLink}`);
+    }
+};
+```
 
 ---
 
@@ -103,8 +135,8 @@ Create a new file at **`/data/champions.json`** and add:
     "aatrox",
     "ahri",
     "akali",
-    "alistar",
-...
+    "alistar"
+    "..."
 ]
 ```
 (Extend this list with all League of Legends champions.)
@@ -151,7 +183,7 @@ Logged in as YOURBOTNAME#YOURBOTNUMBERTAG
 2. Click **Deploy** and wait for the process to complete.
 3. Once deployed, check the logs to confirm it's running:
    ```sh
-   Logged in as FixTwitter#8837
+   Logged in as YOURBOTNAME#YOURBOTNUMBERTAG
    ```
 
 ---
