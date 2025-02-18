@@ -95,55 +95,9 @@ CLIENT_ID=your-discord-application-id
 │── .env  # Stores bot token
 │── package.json  # Project dependencies
 ```
-
 ---
 
-## 7️⃣ Add the `/build` Command
-### **Step 1: Create `/commands/build.js`**
-Create a new file at **`/commands/build.js`**:
-```javascript
-const { SlashCommandBuilder } = require('discord.js');
-const champions = require('../data/champions.json');
-
-module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('build')
-        .setDescription('Get a League of Legends champion build')
-        .addStringOption(option =>
-            option.setName('champion')
-                .setDescription('Choose a champion')
-                .setRequired(true)
-                .setAutocomplete(true)
-        ),
-    async execute(interaction) {
-        const champion = interaction.options.getString('champion');
-        if (!champions.includes(champion.toLowerCase())) {
-            return interaction.reply({ content: 'Champion not found!', ephemeral: true });
-        }
-        const buildLink = `https://u.gg/lol/champions/${champion}/build/`;
-        await interaction.reply(`Here's the build for **${champion}**: ${buildLink}`);
-    }
-};
-```
-
----
-
-### **Step 2: Create `/data/champions.json`**
-Create a new file at **`/data/champions.json`** and add:
-```json
-[
-    "aatrox",
-    "ahri",
-    "akali",
-    "alistar"
-    "..."
-]
-```
-(Extend this list with all League of Legends champions.)
-
----
-
-## 8️⃣ Deploy Slash Commands
+## 7️⃣ Deploy Slash Commands
 ```sh
 node deploy-commands.js
 ```
@@ -155,7 +109,7 @@ Slash commands registered successfully.
 
 ---
 
-## 9️⃣ Run the Bot Locally (Optional for Testing)
+## 8️⃣ Run the Bot Locally (Optional for Testing)
 ```sh
 node index.js
 ```
@@ -166,7 +120,7 @@ Logged in as YOURBOTNAME#YOURBOTNUMBERTAG
 
 ---
 
-## 🔟 Deploy on Railway
+## 9️⃣ Deploy on Railway
 ### **Step 1: Create a Railway Project**
 1. Go to [Railway.app](https://railway.app/).
 2. Click **New Project** → **Deploy from GitHub Repo**.
