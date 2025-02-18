@@ -7,7 +7,7 @@ const rouletteData = JSON.parse(
   fs.readFileSync(path.join(__dirname, "../data/roulette.json"), "utf-8")
 );
 
-const cooldowns = new Map(); // Track cooldowns
+const cooldowns = new Map();
 const COOLDOWN_TIME = 5000; // 5 seconds cooldown per user
 
 module.exports = {
@@ -36,6 +36,7 @@ module.exports = {
     ),
 
   async execute(interaction) {
+    await interaction.deferReply();
     const userId = interaction.user.id;
     const betNumber = interaction.options.getString("number")?.toLowerCase();
     const betEvenOrOdd = interaction.options
@@ -48,22 +49,19 @@ module.exports = {
     const isEven =
       parseInt(number) % 2 === 0 && number !== "0" ? "even" : "odd";
 
-    // Cooldown check
     if (cooldowns.has(userId)) {
       const lastUsed = cooldowns.get(userId);
       const timeSinceLastUse = Date.now() - lastUsed;
       if (timeSinceLastUse < COOLDOWN_TIME) {
-        return interaction.reply({
+        return interaction.editReply({
           content: `⏳ You must wait ${
             (COOLDOWN_TIME - timeSinceLastUse) / 1000
           }s before spinning again!`,
-          ephemeral: true,
         });
       }
     }
     cooldowns.set(userId, Date.now());
 
-    // Determine win/loss
     let resultMessage = `🎰 **Roulette Spin** 🎰\n🎲 **${number} - ${color} - ${isEven.toUpperCase()}**`;
     let wonBet = false;
 
@@ -84,7 +82,6 @@ module.exports = {
       resultMessage += "\n❌ **You lost! Better luck next time!**";
     }
 
-    // Create an embedded message
     const embed = new EmbedBuilder()
       .setColor(
         color === "Red" ? "#ff0000" : color === "Black" ? "#000000" : "#00ff00"
@@ -94,6 +91,6 @@ module.exports = {
       .setFooter({ text: "Good luck next time!" })
       .setTimestamp();
 
-    await interaction.reply({ embeds: [embed] });
+    await interaction.editReply({ embeds: [embed] });
   },
 };
