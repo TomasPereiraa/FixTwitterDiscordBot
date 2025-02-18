@@ -16,13 +16,14 @@ module.exports = {
     .setDescription(
       "Spin the roulette and bet on a number, color, even, or odd!"
     )
-    .addStringOption((option) =>
-      option
-        .setName("bet")
-        .setDescription(
-          "Choose a number (0-36), a color (red, black, green), or even/odd"
-        )
-        .setRequired(false)
+    .addStringOption(
+      (option) =>
+        option
+          .setName("bet")
+          .setDescription(
+            "Choose a number (0-36), a color (red, black, green), or even/odd"
+          )
+          .setRequired(true) // Make betting mandatory
     ),
 
   async execute(interaction) {
@@ -48,19 +49,17 @@ module.exports = {
     }
     cooldowns.set(userId, Date.now());
 
-    // Determine win/loss if the user placed a bet
+    // Determine win/loss
     let resultMessage = `🎰 **Roulette Spin** 🎰\n🎲 **${number} - ${color} - ${isEven.toUpperCase()}**`;
-    if (bet) {
-      if (bet === number) {
-        resultMessage += "\n✅ **You won! You hit the exact number!**";
-      } else if (bet === color) {
-        resultMessage += "\n✅ **You won! You guessed the correct color!**";
-      } else if (bet === isEven) {
-        resultMessage +=
-          "\n✅ **You won! You guessed the correct even/odd outcome!**";
-      } else {
-        resultMessage += "\n❌ **You lost! Better luck next time!**";
-      }
+    if (bet === number) {
+      resultMessage += "\n✅ **You won! You hit the exact number!**";
+    } else if (bet === color) {
+      resultMessage += "\n✅ **You won! You guessed the correct color!**";
+    } else if (bet === isEven) {
+      resultMessage +=
+        "\n✅ **You won! You guessed the correct even/odd outcome!**";
+    } else {
+      resultMessage += "\n❌ **You lost! Better luck next time!**";
     }
 
     // Create an embedded message
