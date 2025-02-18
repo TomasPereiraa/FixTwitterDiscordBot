@@ -2,7 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const fs = require("fs");
 const path = require("path");
 
-// Load roulette data once at startup
+// Load roulette color data at startup
 const rouletteData = JSON.parse(
   fs.readFileSync(path.join(__dirname, "../data/roulette.json"), "utf-8")
 );
@@ -14,41 +14,46 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("roulette")
     .setDescription(
-      "Spin the roulette and optionally bet on a number, even/odd, and/or color!"
+      "Spin the roulette and optionally bet on a number, even/odd, or a color!"
     )
-    .addStringOption((option) =>
+    .addIntegerOption((option) =>
       option
         .setName("number")
         .setDescription("Choose a number (0-36)")
+        .setMinValue(0)
+        .setMaxValue(36)
         .setRequired(false)
     )
     .addStringOption((option) =>
       option
         .setName("evenorodd")
         .setDescription("Bet on even or odd")
+        .addChoices(
+          { name: "Even", value: "even" },
+          { name: "Odd", value: "odd" }
+        )
         .setRequired(false)
     )
     .addStringOption((option) =>
       option
         .setName("color")
         .setDescription("Bet on red, black, or green")
+        .addChoices(
+          { name: "Red", value: "red" },
+          { name: "Black", value: "black" },
+          { name: "Green", value: "green" }
+        )
         .setRequired(false)
     ),
 
   async execute(interaction) {
     await interaction.deferReply();
     const userId = interaction.user.id;
-    const betNumber = interaction.options.getString("number")?.toLowerCase();
-    const betEvenOrOdd = interaction.options
-      .getString("evenorodd")
-      ?.toLowerCase();
-    const betColor = interaction.options.getString("color")?.toLowerCase();
+    const betNumber = interaction.options.getInteger("number");
+    const betEvenOrOdd = interaction.options.getString("evenorodd");
+    const betColor = interaction.options.getString("color");
 
-    const number = Math.floor(Math.random() * 37).toString(); // 0 to 36
-    const color = rouletteData[number] || "Unknown";
-    const isEven =
-      parseInt(number) % 2 === 0 && number !== "0" ? "even" : "odd";
-
+    // Cooldown check
     if (cooldowns.has(userId)) {
       const lastUsed = cooldowns.get(userId);
       const timeSinceLastUse = Date.now() - lastUsed;
@@ -62,29 +67,70 @@ module.exports = {
     }
     cooldowns.set(userId, Date.now());
 
-    let resultMessage = `🎰 **Roulette Spin** 🎰\n🎲 **${number} - ${color} - ${isEven.toUpperCase()}**`;
-    let wonBet = false;
+    // Spin roulette
+    const rolledNumber = Math.floor(Math.random() * 37); // 0 to 36
+    const rolledColor = rouletteData[rolledNumber.toString()] || "Unknown";
+    const isEven =
+      rolledNumber !== 0 && rolledNumber % 2 === 0 ? "even" : "odd";
 
-    if (betNumber && betNumber === number) {
-      resultMessage += "\n✅ **You won! You hit the exact number!**";
-      wonBet = true;
+    let resultMessage = `🎰 **Roulette Spin** 🎰\n🎲 **${rolledNumber} - ${
+      rolledColor === "Red"
+        ? "🔴 Red"
+        : rolledColor === "Black"
+        ? "⚫ Black"
+        : "🟢 Green"
+    } - ${isEven.toUpperCase()}**\n`;
+
+    let winMessages = [];
+    let loseMessages = [];
+
+    // Number Bet
+    if (betNumber !== null) {
+      if (betNumber === rolledNumber) {
+        winMessages.push("🏆 **Exact Number Win!**");
+      } else {
+        loseMessages.push("❌ **Number Bet Lost!**");
+      }
     }
-    if (betEvenOrOdd && betEvenOrOdd === isEven) {
-      resultMessage +=
-        "\n✅ **You won! You guessed the correct even/odd outcome!**";
-      wonBet = true;
+
+    // Even/Odd Bet
+    if (betEvenOrOdd) {
+      if (betEvenOrOdd === isEven) {
+        winMessages.push("✅ **Correct Even/Odd!**");
+      } else {
+        loseMessages.push("❌ **Even/Odd Bet Lost!**");
+      }
     }
-    if (betColor && betColor === color.toLowerCase()) {
-      resultMessage += "\n✅ **You won! You guessed the correct color!**";
-      wonBet = true;
+
+    // Color Bet
+    if (betColor) {
+      if (betColor === rolledColor.toLowerCase()) {
+        winMessages.push("✅ **Correct Color Guess!**");
+      } else {
+        loseMessages.push("❌ **Color Bet Lost!**");
+      }
     }
-    if (!wonBet && (betNumber || betEvenOrOdd || betColor)) {
-      resultMessage += "\n❌ **You lost! Better luck next time!**";
+
+    // Format final message
+    if (winMessages.length > 0) {
+      resultMessage += `\n${winMessages.join("\n")}`;
+    }
+    if (loseMessages.length > 0) {
+      resultMessage += `\n${loseMessages.join("\n")}`;
+    }
+
+    // If no bets were placed
+    if (!betNumber && !betEvenOrOdd && !betColor) {
+      resultMessage += "\n💭 **You didn't place a bet, just spun the wheel!**";
     }
 
     const embed = new EmbedBuilder()
       .setColor(
-        color === "Red" ? "#ff0000" : color === "Black" ? "#000000" : "#00ff00"
+        rolledColor === "Red"
+          ? "#ff0000"
+          : rolledColor === "Black"
+          ? "#000000"
+          : "#00ff00"
       )
       .setTitle("🎰 Roulette Result")
       .setDescription(resultMessage)
