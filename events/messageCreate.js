@@ -35,24 +35,17 @@ module.exports = async (client, message) => {
           .permissionsFor(client.user)
           .has(PermissionsBitField.Flags.ManageMessages)
       ) {
-        // Delete the original message
         await message.delete();
 
-        // Create a webhook with the user's name and avatar
         const webhook = await message.channel.createWebhook({
           name: message.author.username,
           avatar: message.author.displayAvatarURL({ dynamic: true }),
         });
-
-        // Send the fixed message using the webhook
         await webhook.send({
           content: fixedMessage,
         });
-
-        // Delete the webhook to clean up
         await webhook.delete();
       } else {
-        // Fallback: If no Manage Webhooks permission, send as normal message
         await message.channel.send(
           `**${message.author.username}:** ${fixedMessage}`
         );
