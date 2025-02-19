@@ -4,7 +4,11 @@
 This is a **Discord bot** designed to:
 ✅ Fix Twitter and Instagram links in Discord messages  
 ✅ Provide a fun `/roulette` command  
-✅ Fetch **League of Legends build links** using `/build <champion>`
+✅ Fetch **League of Legends build links** using `/build <champion>`  
+✅ Flip a virtual coin with `/flip`  
+✅ Retrieve server information using `/serverinfo`  
+✅ Display bot statistics via `/stats`  
+✅ Fetch user details using `/userinfo`  
 
 This guide will help you **set up, run, and deploy** the bot on **Railway** for **24/7 availability**.
 
@@ -75,43 +79,25 @@ CLIENT_ID=your-discord-application-id
 │── /commands
 │   ├── roulette.js  # Slash command for roulette
 │   ├── build.js  # Slash command for LoL champion builds
+│   ├── flip.js  # Coin flip command
+│   ├── serverinfo.js  # Fetches server details
+│   ├── stats.js  # Displays bot statistics
+│   ├── userinfo.js  # Fetches user details
 │── /events
 │   ├── interactionCreate.js  # Handles commands & autocomplete
 │   ├── messageCreate.js  # Handles Twitter/Instagram link fix
 │   ├── ready.js  # Runs when bot starts
 │── /data
 │   ├── champions.json  # List of all LoL champions for autocomplete
+│   ├── roulette.json  # List of all numbers and colors
 │── index.js  # Main bot file
 │── deploy-commands.js  # Registers slash commands
 │── .env  # Stores bot token
 │── package.json  # Project dependencies
 ```
-
 ---
 
-## 7️⃣ Add the `/build` Command
-### **Step 1: Create `/commands/build.js`**
-Create a new file at **`/commands/build.js`**:
-
-
----
-
-### **Step 2: Create `/data/champions.json`**
-Create a new file at **`/data/champions.json`** and add:
-```json
-[
-    "aatrox",
-    "ahri",
-    "akali",
-    "alistar",
-...
-]
-```
-(Extend this list with all League of Legends champions.)
-
----
-
-## 8️⃣ Deploy Slash Commands
+## 7️⃣ Deploy Slash Commands
 ```sh
 node deploy-commands.js
 ```
@@ -123,7 +109,7 @@ Slash commands registered successfully.
 
 ---
 
-## 9️⃣ Run the Bot Locally (Optional for Testing)
+## 8️⃣ Run the Bot Locally (Optional for Testing)
 ```sh
 node index.js
 ```
@@ -134,7 +120,7 @@ Logged in as YOURBOTNAME#YOURBOTNUMBERTAG
 
 ---
 
-## 🔟 Deploy on Railway
+## 9️⃣ Deploy on Railway
 ### **Step 1: Create a Railway Project**
 1. Go to [Railway.app](https://railway.app/).
 2. Click **New Project** → **Deploy from GitHub Repo**.
@@ -151,7 +137,7 @@ Logged in as YOURBOTNAME#YOURBOTNUMBERTAG
 2. Click **Deploy** and wait for the process to complete.
 3. Once deployed, check the logs to confirm it's running:
    ```sh
-   Logged in as FixTwitter#8837
+   Logged in as YOURBOTNAME#YOURBOTNUMBERTAG
    ```
 
 ---
