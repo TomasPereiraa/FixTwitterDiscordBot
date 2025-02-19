@@ -41,6 +41,7 @@ Before you start, make sure you have:
    - **View Channels**
    - **Send Messages**
    - **Manage Messages**
+   - **Manage WebHooks**
    - **Embed Links**
    - **Read Message History**
    - **Use Slash Commands**
