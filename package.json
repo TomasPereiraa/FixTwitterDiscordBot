@@ -1,4 +1,13 @@
 {
+  "name": "fix-twitter-discord-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "@discordjs/rest": "^2.4.3",
     "axios": "^1.7.9",
