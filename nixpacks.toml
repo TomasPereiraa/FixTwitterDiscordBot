@@ -1,8 +1,22 @@
+# Tell Nixpacks this is a Node.js project
+[project]
+platform = "nodejs"
+
+# Install a specific Node provider (you already declared ">=18" in package.json)
+# You can pin to nodejs_18 or nodejs_20, depending on which LTS you want.
 [phases.setup]
-nixPkgs = ["nodejs"]
+providers = ["nodejs_18", "npm-9_x"]
 
+# Phase for installing dependencies
+[phases.install]
+cmds = ["npm ci"]
+
+# If you have any build steps (e.g. transpiling TypeScript), list them here.
+# If you do NOT have a separate build step (since this is just a plain JS bot),
+# you can either leave this empty or omit it entirely.
 [phases.build]
-cmds = ["npm install"]
+cmds = []
 
-[phases.start]
+# Top-level “start” command (what actually runs when the container/process starts)
+[start]
 cmd = "npm start"
