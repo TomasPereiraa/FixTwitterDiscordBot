@@ -19,7 +19,7 @@ module.exports = async (client, message) => {
   } else if (instaRegex.test(message.content)) {
     fixedMessage = message.content.replace(
       /www\.instagram\.com/g,
-      "www.ddinstagram.com"
+      "www.kkinstagram.com"
     );
   }
 
